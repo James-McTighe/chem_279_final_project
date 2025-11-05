@@ -2,5 +2,5 @@
 
 docker run --rm -it \
     -v "$(pwd):/work" \
-    x79Project:Latest \
+    x79project:latest \
     bash

@@ -1,5 +1,5 @@
 # Use an official Ubuntu base image
-FROM ubuntu:25.10
+FROM ubuntu:22.04
 
 # Set noninteractive mode for apt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -46,7 +46,7 @@ RUN git clone https://github.com/chemfiles/chemfiles.git && \
     cd chemfiles && \
     mkdir build && cd build && \
     cmake .. \
-        -DCMAKE_BUILD_TYPE=Release && \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF && \
     cmake --build . -- -j$(nproc) && \
     ctest && \
     cmake --build . --target install && \
@@ -66,7 +66,5 @@ RUN pip install --upgrade pip && \
         h5py 
 
 WORKDIR /work
-
-RUN echo "umask 000" >> /etc/profile
 
 CMD ["bash"]

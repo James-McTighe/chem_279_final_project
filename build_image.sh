@@ -1,5 +1,4 @@
 #!/bin/sh
 
 docker build \
-    -t x79Project:Latest \
-    .
+    -t x79project:latest .
