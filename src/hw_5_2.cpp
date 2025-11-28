@@ -33,7 +33,6 @@ int main(int argc, char ** argv)
                   << std::endl;
         return EXIT_FAILURE;
     }
-
     // parse the config file
     fs::path config_file_path(argv[1]);
     if ( !fs::exists(config_file_path) )
@@ -84,7 +83,6 @@ int main(int argc, char ** argv)
         }
     }
     std::cout << std::endl;
-
     std::cout << "Order of rows is as follows" << std::endl;
     std::cout << "x" << std::endl;
     std::cout << "y" << std::endl;
@@ -150,7 +148,6 @@ int main(int argc, char ** argv)
     }
 
 
-    // TODO gardient_electronic
     gradient_electronic.zeros();
 
     // First electronic term: sum_(u!=v)
