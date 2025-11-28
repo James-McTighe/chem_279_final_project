@@ -1,6 +1,6 @@
-cmake_minimum_required (VERSION 3.22)
+cmake_minimum_required (VERSION 3.31)
 
-project (homework_5 LANGUAGES CXX)
+project (homework_4 LANGUAGES CXX)
 
 # Compiler requirements
 set(CMAKE_CXX_STANDARD 20) 
@@ -16,15 +16,14 @@ find_package(Armadillo REQUIRED)
 find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
-find_package(chemfiles REQUIRED)
 
+add_library(common INTERFACE)
 
 target_link_libraries(common INTERFACE
     Eigen3::Eigen
     armadillo
     nlohmann_json::nlohmann_json
     HDF5::HDF5
-    chemfiles
 )
 
 target_compile_definitions(common INTERFACE 
