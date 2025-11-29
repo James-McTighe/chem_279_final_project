@@ -1,6 +1,6 @@
 {
-    "name": "localhost/x79project",
-    "image": "localhost/x79project",
+    "name": "x79project",
+    "image": "x79project",
     "customizations": {
         "vscode": {
             "extensions": [
