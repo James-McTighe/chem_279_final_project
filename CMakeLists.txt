@@ -37,9 +37,9 @@ link_libraries(common)
 
 # If Needed Make Modifications below this line 
 
-add_executable(hw_5_2 src/hw_5_2.cpp)
+add_executable(ir_spec src/ir_spectrum.cpp)
 
-target_include_directories(hw_5_2 PRIVATE 
+target_include_directories(ir_spec PRIVATE 
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/basis_functions
     ${CMAKE_SOURCE_DIR}/include/fock
