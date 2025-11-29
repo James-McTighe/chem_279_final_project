@@ -1,25 +1,11 @@
-#include <cstdlib>
-#include <filesystem>
-#include <format>
-#include <fstream>
-#include <iostream>
-#include <stdexcept>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <vector>
+#include "all_headers.hpp"
 
-#include <armadillo>
-#include <nlohmann/json.hpp>
+/**
+ * A large portion of this main file was taken from the implementation for hw5
+ * Some portions have been modified
+ * Header files are read from a single master header in the "include" directory
+ */
 
-#include "Gaussian.hpp"
-#include "atom.hpp"
-#include "basis.hpp"
-#include "fock.hpp"
-#include "gradient.hpp"
-#include "hamiltonian.hpp"
-#include "math.hpp"
-#include "overlap.hpp"
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
@@ -29,16 +15,14 @@ int main(int argc, char ** argv)
     // check that a config file is supplied
     if ( argc != 2 )
     {
-        std::cerr << "Usage: " << argv[0] << " path/to/config.json"
-                  << std::endl;
+        std::cerr << "\nUsage: " << argv[0] << " path/to/config.json\n\n";
         return EXIT_FAILURE;
     }
     // parse the config file
     fs::path config_file_path(argv[1]);
     if ( !fs::exists(config_file_path) )
     {
-        std::cerr << "Path: " << config_file_path << " does not exist"
-                  << std::endl;
+        std::cerr << "\nPath: " << config_file_path << " does not exist\n\n";
         return EXIT_FAILURE;
     }
     std::ifstream config_file(config_file_path);
@@ -88,15 +72,14 @@ int main(int argc, char ** argv)
     std::cout << "y" << std::endl;
     std::cout << "z" << std::endl;
 
+    /**
+     * Initialize Vectors
+     * Based on input and a standard 3-dimensions
+     */
+
     arma::mat Suv_RA(num_3D_dims, num_basis_functions * num_basis_functions);
     Suv_RA.zeros();
-    // Ideally, this would be (3, n_funcs, n_funcs) rank-3 tensor
-    // but we're flattening (n-funcs, n-atoms) into a single dimension (n-funcs
-    // ^ 2) this is because tensors are not supported in Eigen and I want
-    // students to be able to submit their work in a consistent format
     arma::mat gammaAB_RA(num_3D_dims, num_atoms * num_atoms);
-    // This is the same story, ideally, this would be (3, num_atoms, num_atoms)
-    // instead of (3, num_atoms ^ 2)
     arma::mat gradient_nuclear(num_3D_dims, num_atoms);
     arma::mat gradient_electronic(num_3D_dims, num_atoms);
     arma::mat gradient(num_3D_dims, num_atoms);
@@ -179,15 +162,12 @@ int main(int argc, char ** argv)
         }
     }
 
-    // TODO gradient
     gradient = gradient_electronic + gradient_nuclear;
-    // You do not need to modify the code below this point
 
     // Set print configs
     std::cout << std::fixed << std::setprecision(4) << std::setw(8)
               << std::right;
 
-    // inspect your answer via printing
     Suv_RA.print("Suv_RA");
     gammaAB_RA.print("gammaAB_RA");
     gradient_nuclear.print("gradient_nuclear");
@@ -223,4 +203,6 @@ int main(int argc, char ** argv)
     gradient.save(
         arma::hdf5_name(output_file_path, "gradient",
                         arma::hdf5_opts::append + arma::hdf5_opts::trans));
+
+    // TODO write IR solutions
 }
