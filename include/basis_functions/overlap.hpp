@@ -2,7 +2,7 @@
 #include <armadillo>
 #include <vector>
 
-#include "Gaussian.hpp"
+#include "gaussian.hpp"
 #include "basis.hpp"
 #include "math.hpp"
 

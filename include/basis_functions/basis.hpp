@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Gaussian.hpp"
+#include "gaussian.hpp"
 #include "atom.hpp"
 #include "overlap.hpp"
 #include <array>
