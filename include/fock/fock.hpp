@@ -3,7 +3,7 @@
 #include <numeric>
 #include <stdexcept>
 
-#include "gaussian.hpp"
+#include "Gaussian.hpp"
 #include "basis.hpp"
 
 // from hw4 solution

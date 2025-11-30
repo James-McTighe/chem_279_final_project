@@ -12,7 +12,7 @@
 #include <armadillo>
 #include <nlohmann/json.hpp>
 
-#include "gaussian.hpp"
+#include "Gaussian.hpp"
 #include "atom.hpp"
 #include "basis.hpp"
 #include "fock.hpp"

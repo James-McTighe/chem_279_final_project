@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gaussian.hpp"
+#include "Gaussian.hpp"
 #include "atom.hpp"
 #include "overlap.hpp"
 #include <array>
@@ -144,7 +144,7 @@ struct Cs : ContractedGaussian
         ion_term = 14.051;
         beta = -21;
 
-        file_path = fs::path("basis/C_s_STO3G.json");
+        file_path = fs::path("input/basis/C_s_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -163,7 +163,7 @@ struct Cpx : ContractedGaussian
         ion_term = 5.572;
         beta = -21;
 
-        file_path = fs::path("basis/C_p_STO3G.json");
+        file_path = fs::path("input/basis/C_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -182,7 +182,7 @@ struct Cpy : ContractedGaussian
         ion_term = 5.572;
         beta = -21;
 
-        file_path = fs::path("basis/C_p_STO3G.json");
+        file_path = fs::path("input/basis/C_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -201,7 +201,7 @@ struct Cpz : ContractedGaussian
         ion_term = 5.572;
         beta = -21;
 
-        file_path = fs::path("basis/C_p_STO3G.json");
+        file_path = fs::path("input/basis/C_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -225,7 +225,7 @@ struct Hs : ContractedGaussian
         ion_term = 7.176;
         beta = -9;
 
-        file_path = fs::path("basis/H_s_STO3G.json");
+        file_path = fs::path("input/basis/H_s_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -249,7 +249,7 @@ struct Fs : ContractedGaussian
         ion_term = 32.272;
         beta = -39;
 
-        file_path = fs::path("basis/F_s_STO3G.json");
+        file_path = fs::path("input/basis/F_s_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -268,7 +268,7 @@ struct Fpx : ContractedGaussian
         ion_term = 11.080;
         beta = -39;
 
-        file_path = fs::path("basis/F_p_STO3G.json");
+        file_path = fs::path("input/basis/F_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -286,7 +286,7 @@ struct Fpy : ContractedGaussian
         ion_term = 11.080;
         beta = -39;
 
-        file_path = fs::path("basis/F_p_STO3G.json");
+        file_path = fs::path("input/basis/F_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -304,7 +304,7 @@ struct Fpz : ContractedGaussian
         ion_term = 11.080;
         beta = -39;
 
-        file_path = fs::path("basis/F_p_STO3G.json");
+        file_path = fs::path("input/basis/F_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -328,7 +328,7 @@ struct Ns : ContractedGaussian
         ion_term = 19.316;
         beta = -25;
 
-        file_path = fs::path("basis/N_s_STO3G.json");
+        file_path = fs::path("input/basis/N_s_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -347,7 +347,7 @@ struct Npx : ContractedGaussian
         ion_term = 7.275;
         beta = -25;
 
-        file_path = fs::path("basis/N_p_STO3G.json");
+        file_path = fs::path("input/basis/N_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -366,7 +366,7 @@ struct Npy : ContractedGaussian
         ion_term = 7.275;
         beta = -25;
 
-        file_path = fs::path("basis/N_p_STO3G.json");
+        file_path = fs::path("input/basis/N_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -385,7 +385,7 @@ struct Npz : ContractedGaussian
         ion_term = 7.275;
         beta = -25;
 
-        file_path = fs::path("basis/N_p_STO3G.json");
+        file_path = fs::path("input/basis/N_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -409,7 +409,7 @@ struct Os : ContractedGaussian
         ion_term = 25.390;
         beta = -31;
 
-        file_path = fs::path("basis/O_s_STO3G.json");
+        file_path = fs::path("input/basis/O_s_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -428,7 +428,7 @@ struct Opx : ContractedGaussian
         ion_term = 9.111;
         beta = -31;
 
-        file_path = fs::path("basis/O_p_STO3G.json");
+        file_path = fs::path("input/basis/O_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -447,7 +447,7 @@ struct Opy : ContractedGaussian
         ion_term = 9.111;
         beta = -31;
 
-        file_path = fs::path("basis/O_p_STO3G.json");
+        file_path = fs::path("input/basis/O_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
@@ -466,7 +466,7 @@ struct Opz : ContractedGaussian
         ion_term = 9.111;
         beta = -31;
 
-        file_path = fs::path("basis/O_p_STO3G.json");
+        file_path = fs::path("input/basis/O_p_STO3G.json");
         set_parameters();
         build_primitives_and_norms();
     }
