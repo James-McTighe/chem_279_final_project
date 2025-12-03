@@ -164,6 +164,13 @@ int main(int argc, char ** argv)
 
     gradient = gradient_electronic + gradient_nuclear;
 
+    /**
+     * Vibration Calculations
+     * TODO Geometry Optimization
+     * TODO Hessian Matrix
+     * TODO Mass weighting and diagonalization
+     */
+
     // Set print configs
     std::cout << std::fixed << std::setprecision(4) << std::setw(8)
               << std::right;
