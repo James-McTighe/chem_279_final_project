@@ -44,4 +44,5 @@ target_include_directories(ir_spec PRIVATE
     ${CMAKE_SOURCE_DIR}/include/basis_functions
     ${CMAKE_SOURCE_DIR}/include/fock
     ${CMAKE_SOURCE_DIR}/include/gradient
+    ${CMAKE_SOURCE_DIR}/include/nr
 )

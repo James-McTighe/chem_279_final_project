@@ -12,7 +12,7 @@
 #include <armadillo>
 #include <nlohmann/json.hpp>
 
-#include "Gaussian.hpp"
+#include "gaussian.hpp"
 #include "atom.hpp"
 #include "basis.hpp"
 #include "fock.hpp"
@@ -20,3 +20,5 @@
 #include "hamiltonian.hpp"
 #include "math.hpp"
 #include "overlap.hpp"
+
+#include "golden.hpp"

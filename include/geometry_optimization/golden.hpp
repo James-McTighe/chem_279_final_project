@@ -1,4 +1,10 @@
-#include "nr/nr3.h"
+#include "nr3.h"
+
+/**
+ * Taken from HW 1
+ * Used for central difference approximation of atom geometries
+ */
+
 
 struct Bracketmethod
 {
