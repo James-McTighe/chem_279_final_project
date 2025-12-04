@@ -45,4 +45,5 @@ target_include_directories(ir_spec PRIVATE
     ${CMAKE_SOURCE_DIR}/include/fock
     ${CMAKE_SOURCE_DIR}/include/gradient
     ${CMAKE_SOURCE_DIR}/include/nr
+    ${CMAKE_SOURCE_DIR}/include/geometry_optimization
 )
