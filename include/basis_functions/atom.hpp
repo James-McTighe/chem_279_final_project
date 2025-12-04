@@ -17,6 +17,7 @@ struct Atom
     double beta;
     double P_total_alpha;
     double P_total_beta;
+    double mass;
 };
 
 double nuclear_repulsion(std::vector<Atom> atoms)
@@ -132,30 +133,35 @@ std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
             a.z_star = 1;
             a.ion_term_s = 7.176;
             a.beta = -9;
+            a.mass = 1.0078;
             break;
         case 6:
             a.z_star = 4;
             a.ion_term_s = 14.051;
             a.ion_term_p = 5.572;
             a.beta = -21;
+            a.mass = 12.011;
             break;
         case 7:
             a.z_star = 5;
             a.ion_term_s = 19.316;
             a.ion_term_p = 7.275;
             a.beta = -25;
+            a.mass = 14.007;
             break;
         case 8:
             a.z_star = 6;
             a.ion_term_s = 25.390;
             a.ion_term_p = 9.111;
             a.beta = -31;
+            a.mass = 15.999;
             break;
         case 9:
             a.z_star = 7;
             a.ion_term_s = 32.272;
             a.ion_term_p = 11.080;
             a.beta = -39;
+            a.mass = 18.998;
             break;
 
         default:
