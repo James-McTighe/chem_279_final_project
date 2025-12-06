@@ -12,13 +12,13 @@
 #include <armadillo>
 #include <nlohmann/json.hpp>
 
-#include "gaussian.hpp"
-#include "atom.hpp"
-#include "basis.hpp"
-#include "fock.hpp"
-#include "gradient.hpp"
-#include "hamiltonian.hpp"
+#include "basis_functions/Gaussian.hpp"
+#include "basis_functions/atom.hpp"
+#include "basis_functions/basis.hpp"
+#include "fock/fock.hpp"
+#include "gradient/gradient.hpp"
+#include "fock/hamiltonian.hpp"
 #include "math.hpp"
-#include "overlap.hpp"
+#include "basis_functions/overlap.hpp"
 
-#include "golden.hpp"
+#include "geometry_optimization/golden.hpp"

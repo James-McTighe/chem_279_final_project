@@ -104,6 +104,8 @@ std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
     std::string line;
     std::getline(file,
                  line); // remove first line, which has the number of atoms
+    std::getline(file,
+                 line); // remove second line, which is a comment (standardizes to MP xyz format)
 
     int idx = 0; // keep track of which atom is which so a single one can be
                  // identified relative to the whole list
@@ -115,7 +117,29 @@ std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
         Atom a;
         arma::vec3 p;
 
-        linestream >> a.z_num;
+        // Try to read as atomic number first, if that fails, try as element symbol (To work with HW5 xyz format and MP xyz format)
+        std::string first_token;
+        linestream >> first_token;
+        
+        // Check if it's a number or element symbol
+        if ( std::isdigit(first_token[0]) )
+        {
+            // It's an atomic number
+            a.z_num = std::stoi(first_token);
+        }
+        else
+        {
+            // It's an element symbol, convert to atomic number
+            if ( first_token == "H" ) a.z_num = 1;
+            else if ( first_token == "C" ) a.z_num = 6;
+            else if ( first_token == "O" ) a.z_num = 8;
+            else if ( first_token == "F" ) a.z_num = 9;
+            else
+            {
+                throw std::runtime_error("Unknown element symbol: " + first_token);
+            }
+        }
+        
         linestream >> p[0];
         linestream >> p[1];
         linestream >> p[2];
