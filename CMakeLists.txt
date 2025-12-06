@@ -47,3 +47,14 @@ target_include_directories(ir_spec PRIVATE
     ${CMAKE_SOURCE_DIR}/include/nr
     ${CMAKE_SOURCE_DIR}/include/geometry_optimization
 )
+
+add_executable(steepest_descent src/steepest_descent.cpp)
+
+target_include_directories(steepest_descent PRIVATE 
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/basis_functions
+    ${CMAKE_SOURCE_DIR}/include/fock
+    ${CMAKE_SOURCE_DIR}/include/gradient
+    ${CMAKE_SOURCE_DIR}/include/nr
+    ${CMAKE_SOURCE_DIR}/include/geometry_optimization
+)
