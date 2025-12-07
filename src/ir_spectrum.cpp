@@ -112,7 +112,7 @@ int main(int argc, char ** argv)
 
 
     // gammaAB_RA
-    arma::mat y = build_y_matrix(basis_set, final_SCF_state, atoms);
+    arma::mat y = y_matrix(basis_set, atoms, final_SCF_state);
 
     for ( int A = 0; A < num_atoms; ++A )
     {
