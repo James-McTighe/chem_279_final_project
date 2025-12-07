@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fock.hpp"
+#include "hamiltonian.hpp"
 
 arma::mat x_matrix(std::vector<ContractedGaussian> basis_set,
                    SCFState current_state)
@@ -23,8 +24,8 @@ arma::mat x_matrix(std::vector<ContractedGaussian> basis_set,
     return x;
 };
 
-arma::mat build_y_matrix(std::vector<ContractedGaussian> basis_set, SCFState current_state,
-            std::vector<Atom> atoms)
+arma::mat build_y_matrix(std::vector<ContractedGaussian> basis_set,
+                         SCFState current_state, std::vector<Atom> atoms)
 {
     int N_atoms = atoms.size();
     int N_mo = basis_set.size();
@@ -58,10 +59,9 @@ arma::mat build_y_matrix(std::vector<ContractedGaussian> basis_set, SCFState cur
                                          current_state.P_beta(v, u) +
                                      current_state.P_beta(u, v) *
                                          current_state.P_beta(v, u);
-            y_matrix(A,B) = term - sumAB;
+            y_matrix(A, B) = term - sumAB;
         }
     }
-
 
 
     return y_matrix;
@@ -171,4 +171,107 @@ arma::vec3 overlap_gradient(const ContractedGaussian A,
     }
 
     return grad;
+}
+
+// implements hw5 solution and then flattens into vector
+arma::vec calculate_gradient(std::vector<Atom> atoms, int n_alpha, int n_beta)
+{
+    int num_atoms = atoms.size();
+    std::vector<ContractedGaussian> basis = make_sto3g_basis_from_xyz(atoms);
+    int num_basis_functions = basis.size();
+
+
+    arma::mat Suv_RA(3, num_basis_functions * num_basis_functions);
+    Suv_RA.zeros();
+
+    arma::mat gammaAB_RA(3, num_atoms * num_atoms);
+
+    arma::mat gradient_nuclear(3, num_atoms);
+    arma::mat gradient_electronic(3, num_atoms);
+    arma::mat gradient(3, num_atoms);
+
+    // solve scf and get final state
+    arma::mat S = build_overlap_matrix(basis);
+    arma::mat H_core = core_hamiltonian(basis, atoms);
+    SCFState final_SCF_state = solve_SCF_UHF(basis, atoms, n_alpha, n_beta);
+
+    // Nuclear Gradient
+    gradient_nuclear = nuclear_repulsion_gradient(atoms);
+
+    // X Matrix, to be used later
+    arma::mat x = x_matrix(basis, final_SCF_state);
+
+    // Suv_RA
+    for ( int u = 0; u < num_basis_functions; ++u )
+    {
+        for ( int v = 0; v < num_basis_functions; ++v )
+        {
+            if ( basis[u].atom_index == basis[v].atom_index )
+                continue;
+            int col = u * num_basis_functions + v;
+            Suv_RA.col(col) = overlap_gradient(basis[u], basis[v]);
+        }
+    }
+
+
+    // create y matrix
+    arma::mat y = build_y_matrix(basis, final_SCF_state, atoms);
+
+    // below loop creates the gamma matrix
+    for ( int A = 0; A < num_atoms; ++A )
+    {
+        for ( int B = 0; B < num_atoms; ++B )
+        {
+            int col = A * num_atoms + B;
+
+            if ( A == B )
+            {
+                gammaAB_RA.col(col).zeros();
+                continue;
+            }
+
+            gammaAB_RA.col(col) = gamma_derivative(atoms[A], atoms[B]);
+        }
+    }
+
+
+    // gardient_electronic
+    gradient_electronic.zeros();
+
+    // First electronic term using x and overlap: sum_(u!=v)
+    for ( int u = 0; u < num_basis_functions; ++u )
+    {
+        int A_idx = basis[u].atom_index;
+
+        for ( int v = 0; v < num_basis_functions; ++v )
+        {
+            int B_idx = basis[v].atom_index;
+            if ( u == v )
+                continue;
+
+
+            int col = u * num_basis_functions + v;
+            gradient_electronic.col(A_idx) += x(u, v) * Suv_RA.col(col);
+        }
+    }
+
+    // Second electronic term using y and gamma: sum_(B!=A)
+    for ( int A = 0; A < num_atoms; ++A )
+    {
+        for ( int B = 0; B < num_atoms; ++B )
+        {
+            if ( A == B )
+                continue;
+
+            int col = A * num_atoms + B;
+            gradient_electronic.col(A) += y(A, B) * gammaAB_RA.col(col);
+        }
+    }
+
+    // Full gradient
+    gradient = gradient_electronic + gradient_nuclear;
+
+    arma::vec gradient_vec = gradient.as_col();
+
+    return gradient_vec;
 }
