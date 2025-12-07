@@ -3,6 +3,8 @@
 #include "fock.hpp"
 #include "hamiltonian.hpp"
 
+
+// creates x matrix for size N by N for a vector of basis sets
 arma::mat x_matrix(std::vector<ContractedGaussian> basis_set,
                    SCFState current_state)
 {
@@ -23,50 +25,70 @@ arma::mat x_matrix(std::vector<ContractedGaussian> basis_set,
 
     return x;
 };
-
-arma::mat build_y_matrix(std::vector<ContractedGaussian> basis_set,
-                         SCFState current_state, std::vector<Atom> atoms)
+// evalutes y_ab for two atoms A and B
+double y_ab(std::vector<ContractedGaussian> basis_set, SCFState current_state,
+            Atom A, Atom B)
 {
-    int N_atoms = atoms.size();
-    int N_mo = basis_set.size();
+    double result;
 
-    arma::mat total_density = current_state.P_alpha + current_state.P_beta;
+    // Compute Ptot_AA and Ptot_BB from the AO density matrices
+    double total_density_atom_A = 0.0;
+    double total_density_atom_B = 0.0;
 
-    arma::mat y_matrix(N_atoms, N_atoms, arma::fill::zeros);
-
-    arma::vec Ptot_AA(N_atoms, arma::fill::zeros);
-    for ( int i = 0; i < N_mo; ++i )
+    for ( int mu = 0; mu < basis_set.size(); ++mu )
     {
-        int A = basis_set[i].atom_index;
-        Ptot_AA += total_density(i, i);
-    }
+        int atom_index = basis_set[mu].atom_index;
 
-    for ( int A = 0; A < N_atoms; ++A )
-    {
-        for ( int B = 0; B < N_atoms; ++B )
+        if ( atom_index == A.vector_idx )
         {
-            double term = Ptot_AA(A) * Ptot_AA(B) -
-                          atoms[B].z_star * Ptot_AA(A) -
-                          atoms[A].z_star * Ptot_AA(B);
-            double sumAB = 0.0;
-            for ( int u = 0; u < N_mo; ++u )
-                if ( basis_set[u].atom_index == A )
-
-                    for ( int v = 0; v < N_mo; ++v )
-                        if ( basis_set[v].atom_index == B )
-
-                            sumAB += current_state.P_alpha(u, v) *
-                                         current_state.P_beta(v, u) +
-                                     current_state.P_beta(u, v) *
-                                         current_state.P_beta(v, u);
-            y_matrix(A, B) = term - sumAB;
+            total_density_atom_A +=
+                current_state.P_alpha(mu, mu) + current_state.P_beta(mu, mu);
+        }
+        if ( atom_index == B.vector_idx )
+        {
+            total_density_atom_B +=
+                current_state.P_alpha(mu, mu) + current_state.P_beta(mu, mu);
         }
     }
 
+    result = total_density_atom_A * total_density_atom_B;
+    result -= B.z_star * total_density_atom_A;
+    result -= A.z_star * total_density_atom_B;
 
-    return y_matrix;
+    for ( int u = 0; u < basis_set.size(); ++u )
+    {
+        if ( basis_set[u].atom_index != A.vector_idx )
+            continue;
+
+        for ( int v = 0; v < basis_set.size(); ++v )
+        {
+            if ( basis_set[v].atom_index != B.vector_idx )
+                continue;
+
+            result -=
+                current_state.P_alpha(u, v) * current_state.P_alpha(v, u) +
+                current_state.P_beta(u, v) * current_state.P_beta(v, u);
+        }
+    }
+
+    return result;
 }
 
+// creates the full y matrix of size N atoms by N atoms
+arma::mat y_matrix(std::vector<ContractedGaussian> basis_set,
+                   std::vector<Atom> atoms, SCFState current_state)
+{
+    int N = atoms.size();
+    arma::mat y(N, N, arma::fill::zeros);
+
+    for ( int A = 0; A < N; ++A )
+        for ( int B = 0; B < N; ++B )
+        {
+            y(A, B) = y_ab(basis_set, current_state, atoms[A], atoms[B]);
+        }
+
+    return y;
+};
 
 arma::vec3 boys_func_derivative(Gaussian A, Gaussian Ap, Gaussian B,
                                 Gaussian Bp)
@@ -215,7 +237,7 @@ arma::vec calculate_gradient(std::vector<Atom> atoms, int n_alpha, int n_beta)
 
 
     // create y matrix
-    arma::mat y = build_y_matrix(basis, final_SCF_state, atoms);
+    arma::mat y = y_matrix(basis, atoms, final_SCF_state);
 
     // below loop creates the gamma matrix
     for ( int A = 0; A < num_atoms; ++A )
