@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Gaussian.hpp"
 #include "atom.hpp"
+#include "gaussian.hpp"
 #include "overlap.hpp"
 #include <array>
 #include <cmath>

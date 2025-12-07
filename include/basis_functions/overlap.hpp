@@ -2,8 +2,8 @@
 #include <armadillo>
 #include <vector>
 
-#include "Gaussian.hpp"
 #include "basis.hpp"
+#include "gaussian.hpp"
 #include "math.hpp"
 
 // from hw4 solution
