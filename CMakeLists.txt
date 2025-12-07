@@ -17,6 +17,9 @@ find_package(Eigen3 3.4 REQUIRED NO_MODULE)
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 
+# Find pybind11 for Python bindings
+find_package(pybind11 CONFIG)
+
 add_library(common INTERFACE)
 
 target_link_libraries(common INTERFACE
@@ -30,8 +33,6 @@ target_compile_definitions(common INTERFACE
     ARMA_USE_HDF5
     H5_USE_110_API
 )
-add_compile_options(-Wa,--gsframe=no) # This is to suppress a useless warning on x86 machines
-
 
 link_libraries(common)
 
@@ -58,3 +59,34 @@ target_include_directories(steepest_descent PRIVATE
     ${CMAKE_SOURCE_DIR}/include/nr
     ${CMAKE_SOURCE_DIR}/include/geometry_optimization
 )
+
+# Python bindings for steepest descent (if pybind11 is found)
+if(pybind11_FOUND)
+    # Create an object library to avoid recompiling steepest_descent.cpp
+    # and to share symbols without duplicating them
+    add_library(steepest_descent_obj OBJECT src/steepest_descent.cpp)
+    target_include_directories(steepest_descent_obj PRIVATE 
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/include/basis_functions
+        ${CMAKE_SOURCE_DIR}/include/fock
+        ${CMAKE_SOURCE_DIR}/include/gradient
+        ${CMAKE_SOURCE_DIR}/include/nr
+        ${CMAKE_SOURCE_DIR}/include/geometry_optimization
+    )
+    target_compile_definitions(steepest_descent_obj PRIVATE NO_MAIN)
+    
+    # Create Python module using the object library
+    pybind11_add_module(steepest_descent_py src/steepest_descent_bindings.cpp $<TARGET_OBJECTS:steepest_descent_obj>)
+    target_include_directories(steepest_descent_py PRIVATE 
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/include/basis_functions
+        ${CMAKE_SOURCE_DIR}/include/fock
+        ${CMAKE_SOURCE_DIR}/include/gradient
+        ${CMAKE_SOURCE_DIR}/include/nr
+        ${CMAKE_SOURCE_DIR}/include/geometry_optimization
+    )
+    
+    message(STATUS "pybind11 found - Python bindings will be built")
+else()
+    message(STATUS "pybind11 not found - Python bindings will not be built")
+endif()

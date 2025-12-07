@@ -34,16 +34,7 @@ double calculate_total_energy(std::vector<Atom>& atoms,
     double E_electronic = E_elec_alpha + E_elec_beta;
     
     // Calculate nuclear repulsion energy
-    double E_nuclear = 0.0;
-    int N_atoms = atoms.size();
-    for (int A = 0; A < N_atoms; ++A)
-    {
-        for (int B = A + 1; B < N_atoms; ++B)
-        {
-            double R_AB = arma::norm(atoms[A].pos - atoms[B].pos);
-            E_nuclear += atoms[A].z_star * atoms[B].z_star * gamma_AB(atoms[A], atoms[B]);
-        }
-    }
+    double E_nuclear = nuclear_repulsion(atoms);
     
     return E_electronic + E_nuclear;
 }
@@ -145,7 +136,7 @@ double line_search(std::vector<Atom>& atoms,
                   std::vector<ContractedGaussian>& basis_set,
                   int num_alpha_electrons,
                   int num_beta_electrons,
-                  double max_step = 0.1)  //
+                  double max_step = 0.1)
 {
     const double phi = (1.0 + std::sqrt(5.0)) / 2.0; // Golden ratio
     const double resphi = 2.0 - phi;
@@ -243,7 +234,6 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
     
     std::vector<double> energies;
     std::vector<double> gradient_norms;
-    std::vector<std::vector<arma::vec3>> geometries;
     
     for (int iter = 0; iter < max_iterations; ++iter)
     {
@@ -262,10 +252,6 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
         // Store trajectory
         energies.push_back(energy);
         gradient_norms.push_back(grad_norm);
-        std::vector<arma::vec3> current_geom;
-        for (const auto& atom : atoms)
-            current_geom.push_back(atom.pos);
-        geometries.push_back(current_geom);
         
         // Print iteration info
         std::cout << std::fixed << std::setprecision(8);
@@ -299,6 +285,14 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
             // Save optimized geometry to file if output path provided
             if (!output_path.empty())
             {
+                // Create output directory if it doesn't exist
+                fs::path output_file_path(output_path);
+                fs::path output_dir = output_file_path.parent_path();
+                if (!output_dir.empty() && !fs::exists(output_dir))
+                {
+                    fs::create_directories(output_dir);
+                }
+                
                 std::ofstream outfile(output_path);
                 outfile << atoms.size() << "\n";
                 outfile << "Steepest Descent Optimized Structure - Energy: " 
@@ -310,6 +304,8 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
                            << std::setw(15) << std::setprecision(8) << atom.pos[1] << " "
                            << std::setw(15) << std::setprecision(8) << atom.pos[2] << "\n";
                 }
+                // Append final energy as last line
+                outfile << "Final Energy: " << std::setprecision(10) << energy << " eV\n";
                 outfile.close();
                 std::cout << "\nOptimized geometry saved to: " << output_path << "\n";
             }
@@ -324,10 +320,41 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
         std::cout << " | Step: " << std::setw(10) << step_size << "\n";
     }
     
+    // If we reach here, max iterations reached without convergence
     std::cout << "\nWARNING: Maximum iterations reached without convergence!\n";
     std::cout << "Final gradient norm: " << gradient_norms.back() << "\n";
+    std::cout << "Final energy: " << energies.back() << " eV\n";
+    
+    // Save final geometry even if not fully converged
+    if (!output_path.empty())
+    {
+        // Create output directory if it doesn't exist
+        fs::path output_file_path(output_path);
+        fs::path output_dir = output_file_path.parent_path();
+        if (!output_dir.empty() && !fs::exists(output_dir))
+        {
+            fs::create_directories(output_dir);
+        }
+        
+        std::ofstream outfile(output_path);
+        outfile << atoms.size() << "\n";
+        outfile << "Steepest Descent (NOT CONVERGED) - Energy: " 
+               << std::setprecision(10) << energies.back() << " eV\n";
+        for (const auto& atom : atoms)
+        {
+            outfile << std::setw(2) << atom.z_num << " "
+                   << std::setw(15) << std::setprecision(8) << atom.pos[0] << " "
+                   << std::setw(15) << std::setprecision(8) << atom.pos[1] << " "
+                   << std::setw(15) << std::setprecision(8) << atom.pos[2] << "\n";
+        }
+        // Append final energy as last line
+        outfile << "Final Energy: " << std::setprecision(10) << energies.back() << " eV (NOT CONVERGED)\n";
+        outfile.close();
+        std::cout << "Final geometry saved to: " << output_path << "\n";
+    }
 }
 
+#ifndef NO_MAIN
 int main(int argc, char** argv)
 {
     // Check command line arguments
@@ -382,3 +409,4 @@ int main(int argc, char** argv)
     
     return EXIT_SUCCESS;
 }
+#endif
