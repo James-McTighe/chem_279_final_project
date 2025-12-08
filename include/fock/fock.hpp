@@ -3,8 +3,8 @@
 #include <numeric>
 #include <stdexcept>
 
-#include "gaussian.hpp"
 #include "basis.hpp"
+#include "gaussian.hpp"
 
 // from hw4 solution
 
@@ -210,7 +210,8 @@ SCFState solve_SCF_UHF(const std::vector<ContractedGaussian> & basis_set,
 
     int it = 0;
 
-    std::cout << "Beginning SCF solver\n";
+    if ( logging )
+        std::cout << "Beginning SCF solver\n";
 
     while ( true )
     {
@@ -272,8 +273,9 @@ SCFState solve_SCF_UHF(const std::vector<ContractedGaussian> & basis_set,
         it++;
     }
 
-    std::cout << "SCF complete, total iterations = " << it
-              << "\n*****************\n";
+    if ( logging )
+        std::cout << "SCF complete, total iterations = " << it
+                  << "\n*****************\n";
     return current_state;
 }
 

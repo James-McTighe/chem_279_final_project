@@ -1,4 +1,5 @@
 #!/bin/sh
+./clean.sh
 
 mkdir -p build
 cd build 
