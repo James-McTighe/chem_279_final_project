@@ -44,11 +44,13 @@ int main(int argc, char ** argv)
     int num_basis_functions = basis_set.size();
     int num_3D_dims = 3;
 
-    const double step_size = 1.0e-6;
+    const double step_size = 1.0e-3;
 
     arma::mat H = hessian_matrix(atoms, num_alpha_electrons, num_beta_electrons,
                                  step_size);
 
-    arma::vec freq = vibrational_frequencies(H, atoms, step_size);
+    H.print("hessian");
+
+    arma::vec freq = vibrational_frequencies(H, atoms);
     freq.print("Frequencies");
 }
