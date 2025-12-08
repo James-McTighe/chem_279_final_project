@@ -66,7 +66,7 @@ arma::vec mass_vector(const std::vector<Atom> & atoms)
         mass_vec[i] = mass;
     }
 
-    return mass_vec;
+    return mass_vec / 1822.888486;
 }
 
 arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
@@ -89,16 +89,13 @@ arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
             G(i, j) = 1 / std::sqrt(mass_i * mass_j);
         }
 
-    arma::mat F(3 * N, 3 * N, arma::fill::zeros);
+    arma::mat F(N, N, arma::fill::zeros);
 
 
     F = double_central_derivative_approx(atoms, n_alpha, n_beta, step_size);
 
     arma::mat dy = F;
 
-    for ( int i = 0; i < N; ++i )
-    {
-    }
 
     F %= G;
 
@@ -108,20 +105,29 @@ arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
 
 
 // Solves the eigenvalue problem to find vibrational frequencies (omega^2)
-arma::vec vibrational_frequencies(arma::mat F, std::vector<Atom> atoms,
+arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
+                                  std::vector<Atom> atoms,
                                   const double & step_size)
 {
     arma::vec eigenvalues;
     arma::mat eigenvectors; // Not returned, but computed alongside
-    arma::mat U;
-    arma::eig_sym(eigenvalues, eigenvectors, mass_weighted_hessian);
+    arma::mat M = arma::symmatu(mass_weighted_hessian);
+    arma::eig_sym(eigenvalues, eigenvectors, M);
 
 
-    arma::vec mass_vec = mass_vector(atoms);
-    mass_vec *= step_size;
+    arma::vec frequencies(eigenvalues.n_elem);
+    for ( size_t i = 0; i < eigenvalues.n_elem; ++i )
+    {
+        if ( eigenvalues[i] > 0 )
+        {
+            // Real frequency
+            frequencies[i] = (1.0 / (2.0 * M_PI)) * std::sqrt(eigenvalues[i]);
+        } else
+        {
+            // Imaginary frequency (negative eigenvalue indicates saddle point)
+            frequencies[i] = -(1.0 / (2.0 * M_PI)) * std::sqrt(-eigenvalues[i]);
+        }
+    }
 
-
-    // Eigenvalues are omega^2 values in atomic units
-    // return 1 / (2 * M_PI) * arma::sqrt(eigenvalues);
-    return eigenvalues;
+    return frequencies;
 }

@@ -44,31 +44,11 @@ int main(int argc, char ** argv)
     int num_basis_functions = basis_set.size();
     int num_3D_dims = 3;
 
-    const double step_size = 1.0e-5;
+    const double step_size = 1.0e-6;
 
     arma::mat H = hessian_matrix(atoms, num_alpha_electrons, num_beta_electrons,
                                  step_size);
 
     arma::vec freq = vibrational_frequencies(H, atoms, step_size);
-    /* code */
-    freq *= 0.5;
     freq.print("Frequencies");
-
-    arma::mat F = double_central_derivative_approx(
-        atoms, num_alpha_electrons, num_beta_electrons, step_size);
-
-    arma::vec mass_vec = mass_vector(atoms);
-
-    for ( int i = 0; i < F.n_cols; ++i )
-    {
-        F.col(i) /= mass_vec[i];
-    }
-
-    F *= 0.5;
-
-    double correction = arma::accu(F);
-
-    freq -= correction;
-
-    freq.print("Final Frequencies");
 }
