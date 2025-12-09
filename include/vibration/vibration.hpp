@@ -71,19 +71,20 @@ arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
     int N = mass_vec.size();
 
     // Create G matrix (mass-weighting matrix)
-    arma::mat G(N, N, arma::fill::zeros);
-    for ( int i = 0; i < N; ++i )
-        for ( int j = 0; j < N; ++j )
-        {
-            G(i, j) = 1.0 / std::sqrt(mass_vec[i] * mass_vec[j]);
-        }
+    arma::mat G = arma::diagmat(1 / arma::sqrt(mass_vec));
+    // arma::mat G(N, N, arma::fill::zeros);
+    // for ( int i = 0; i < N; ++i )
+    //     for ( int j = 0; j < N; ++j )
+    //     {
+    //         G(i, j) = 1.0 / std::sqrt(mass_vec[i] * mass_vec[j]);
+    //     }
 
     // Calculate force constant matrix F (Hessian)
     arma::mat F =
         double_central_derivative_approx(atoms, n_alpha, n_beta, step_size);
 
     // Apply mass weighting: F_mass_weighted = F % G (element-wise product)
-    F %= G;
+    F = G * F * G;
 
     return F;
 }
@@ -97,9 +98,10 @@ arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
     arma::mat eigenvectors;
 
     // Symmetrize
-    arma::mat M = arma::diagmat(mass_weighted_hessian);
-    arma::eig_sym(eigenvalues, eigenvectors, M);
+    // arma::mat M = arma::diagmat(mass_weighted_hessian);
+    arma::eig_sym(eigenvalues, eigenvectors, mass_weighted_hessian);
 
+    std::cout << "Eigen Values: " << eigenvalues << std::endl;
 
     // Convert eigenvalues to frequencies in hartree -> cm^-1
     arma::vec frequencies(eigenvalues.n_elem);
