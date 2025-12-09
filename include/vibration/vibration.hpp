@@ -91,14 +91,13 @@ arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
 
 // Calculate vibrational frequencies in cm^-1
 arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
-                                  std::vector<Atom> atoms,
-                                  double threshold_cm = 10.0)
+                                  std::vector<Atom> atoms)
 {
     arma::vec eigenvalues;
     arma::mat eigenvectors;
 
     // Symmetrize
-    arma::mat M = arma::symmatu(mass_weighted_hessian);
+    arma::mat M = arma::diagmat(mass_weighted_hessian);
     arma::eig_sym(eigenvalues, eigenvectors, M);
 
 
