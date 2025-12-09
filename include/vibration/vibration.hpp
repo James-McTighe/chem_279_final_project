@@ -72,18 +72,12 @@ arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
 
     // Create G matrix (mass-weighting matrix)
     arma::mat G = arma::diagmat(1 / arma::sqrt(mass_vec));
-    // arma::mat G(N, N, arma::fill::zeros);
-    // for ( int i = 0; i < N; ++i )
-    //     for ( int j = 0; j < N; ++j )
-    //     {
-    //         G(i, j) = 1.0 / std::sqrt(mass_vec[i] * mass_vec[j]);
-    //     }
 
     // Calculate force constant matrix F (Hessian)
     arma::mat F =
         double_central_derivative_approx(atoms, n_alpha, n_beta, step_size);
 
-    // Apply mass weighting: F_mass_weighted = F % G (element-wise product)
+    // Apply mass weighting: F_mass_weighted
     F = G * F * G;
 
     return F;
