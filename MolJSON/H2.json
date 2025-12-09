@@ -3,5 +3,7 @@
     "output_file_path" : "output/H2.hdf5",
     "output_geometry_path" : "output/H2_optimized.xyz",
     "num_alpha_electrons" : 1, 
-    "num_beta_electrons" : 1
+    "num_beta_electrons" : 1,
+    "gradient_tolerance" : 5.0,
+    "max_iterations" : 40
 }

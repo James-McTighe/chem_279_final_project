@@ -20,7 +20,7 @@ struct Atom
     double mass;
 };
 
-double nuclear_repulsion(std::vector<Atom> atoms)
+inline double nuclear_repulsion(std::vector<Atom> atoms)
 {
     double energy = 0.0;
 
@@ -40,7 +40,7 @@ double nuclear_repulsion(std::vector<Atom> atoms)
     return energy * 27.211324570273;
 }
 
-arma::vec3
+inline arma::vec3
 nuclear_repulsion_derivitive_atom_specific(const Atom & target,
                                            const std::vector<Atom> & atoms)
 {
@@ -67,7 +67,7 @@ nuclear_repulsion_derivitive_atom_specific(const Atom & target,
     return repulsion_gradient;
 }
 
-arma::mat nuclear_repulsion_gradient(const std::vector<Atom> & atoms)
+inline arma::mat nuclear_repulsion_gradient(const std::vector<Atom> & atoms)
 {
     // helper lambda
     auto gradient_helper = [atoms](Atom target) {
@@ -87,7 +87,7 @@ arma::mat nuclear_repulsion_gradient(const std::vector<Atom> & atoms)
     return nuclear_gradient;
 }
 
-std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
+inline std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
 {
     if ( verbose )
         std::cout << "Attempting to parse: " << filepath << std::endl;

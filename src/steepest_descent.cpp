@@ -13,7 +13,6 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-// Calculate total energy for a given geometry
 double calculate_total_energy(std::vector<Atom>& atoms, 
                               std::vector<ContractedGaussian>& basis_set,
                               int num_alpha_electrons, 
@@ -39,95 +38,16 @@ double calculate_total_energy(std::vector<Atom>& atoms,
     return E_electronic + E_nuclear;
 }
 
-// Calculate gradient for current geometry
+// Wrapper for calculate_gradient to match Python bindings signature
 arma::mat calculate_gradient(std::vector<Atom>& atoms,
                              std::vector<ContractedGaussian>& basis_set,
                              int num_alpha_electrons,
                              int num_beta_electrons)
 {
-    int num_atoms = atoms.size();
-    int num_basis_functions = basis_set.size();
     
-    // Run SCF
-    SCFState scf_state = solve_SCF_UHF(basis_set, atoms,
-                                       num_alpha_electrons,
-                                       num_beta_electrons,
-                                       false);
-    
-    // Build gradient matrices
-    arma::mat gradient_nuclear(3, num_atoms, arma::fill::zeros);
-    arma::mat gradient_electronic(3, num_atoms, arma::fill::zeros);
-    
-    // Calculate overlap gradient matrix Suv_RA
-    arma::mat Suv_RA(3, num_basis_functions * num_basis_functions, arma::fill::zeros);
-    int col = 0;
-    for (int u = 0; u < num_basis_functions; ++u)
-    {
-        for (int v = 0; v < num_basis_functions; ++v)
-        {
-            arma::vec3 grad = overlap_gradient(basis_set[u], basis_set[v]);
-            Suv_RA.col(col) = grad;
-            col++;
-        }
-    }
-    
-    // Calculate gamma derivative matrix
-    arma::mat gammaAB_RA(3, num_atoms * num_atoms, arma::fill::zeros);
-    col = 0;
-    for (int A = 0; A < num_atoms; ++A)
-    {
-        for (int B = 0; B < num_atoms; ++B)
-        {
-            arma::vec3 grad = gamma_derivative(atoms[A], atoms[B]);
-            gammaAB_RA.col(col) = grad;
-            col++;
-        }
-    }
-    
-    // Calculate nuclear gradient
-    for (int A = 0; A < num_atoms; ++A)
-    {
-        arma::vec3 grad_A(arma::fill::zeros);
-        
-        for (int B = 0; B < num_atoms; ++B)
-        {
-            if (A == B) continue;
-            
-            int col_AB = A * num_atoms + B;
-            grad_A += atoms[A].z_star * atoms[B].z_star * gammaAB_RA.col(col_AB);
-        }
-        
-        gradient_nuclear.col(A) = grad_A;
-    }
-    
-    // Calculate electronic gradient
-    arma::mat x = x_matrix(basis_set, scf_state);
-    arma::mat y = build_y_matrix(basis_set, scf_state, atoms);
-    
-    // First electronic term: overlap gradient contribution
-    for (int u = 0; u < num_basis_functions; ++u)
-    {
-        for (int v = 0; v < num_basis_functions; ++v)
-        {
-            int A = basis_set[u].atom_index;
-            int col_uv = u * num_basis_functions + v;
-            gradient_electronic.col(A) -= x(u, v) * Suv_RA.col(col_uv);
-        }
-    }
-    
-    // Second electronic term: gamma derivative contribution
-    for (int A = 0; A < num_atoms; ++A)
-    {
-        for (int B = 0; B < num_atoms; ++B)
-        {
-            if (A == B) continue;
-            
-            int col_AB = A * num_atoms + B;
-            gradient_electronic.col(A) += y(A, B) * gammaAB_RA.col(col_AB);
-        }
-    }
-    
-    return gradient_electronic + gradient_nuclear;
+    arma::vec gradient_vec = calculate_gradient(atoms, num_alpha_electrons, num_beta_electrons);
+    // Reshape to matrix form (3 x num_atoms)
+    return arma::reshape(gradient_vec, 3, atoms.size());
 }
 
 // Line search using golden section method to find optimal step size
@@ -136,76 +56,48 @@ double line_search(std::vector<Atom>& atoms,
                   std::vector<ContractedGaussian>& basis_set,
                   int num_alpha_electrons,
                   int num_beta_electrons,
-                  double max_step = 0.1)
+                  double max_step = 0.5)
 {
-    const double phi = (1.0 + std::sqrt(5.0)) / 2.0; // Golden ratio
-    const double resphi = 2.0 - phi;
-    
     // Store original positions
     std::vector<arma::vec3> original_positions;
     for (const auto& atom : atoms)
         original_positions.push_back(atom.pos);
     
-    // Search direction is negative gradient
+    // Get initial energy before taking a step
+    double initial_energy = calculate_total_energy(atoms, basis_set, num_alpha_electrons, num_beta_electrons);
+    
+    // Try using NEGATIVE gradient (proper steepest descent direction)
     arma::mat search_dir = -gradient;
     
     // Scale the max_step based on gradient magnitude to prevent huge steps
     double grad_norm = arma::norm(search_dir, "fro");
-    double adaptive_max_step = std::min(max_step, 0.5 / (grad_norm + 1e-10));
+    double adaptive_max_step = std::min(max_step, 0.01 / (grad_norm + 1e-10));
     
-    // Golden section search bounds
-    double a = 0.0;
-    double b = adaptive_max_step;
-    
-    // Initial interval reduction
-    double tol = 1e-5;
-    double c = b - (b - a) * resphi;
-    double d = a + (b - a) * resphi;
-    
-    // Function to evaluate energy at a given step size
-    auto eval_energy = [&](double step) {
-        // Update positions
-        for (size_t i = 0; i < atoms.size(); ++i)
+    // Create lambda function for golden section search
+    auto energy_func = [&](double step) -> double {
+        // Create temporary copies to avoid modifying atoms during search
+        std::vector<Atom> temp_atoms = atoms;
+        for (size_t i = 0; i < temp_atoms.size(); ++i)
         {
-            atoms[i].pos = original_positions[i] + step * search_dir.col(i);
+            temp_atoms[i].pos = original_positions[i] + step * search_dir.col(i);
         }
         
         // Rebuild basis set with new positions
-        basis_set = make_sto3g_basis_from_xyz(atoms);
+        auto temp_basis_set = make_sto3g_basis_from_xyz(temp_atoms);
         
         // Calculate energy
-        return calculate_total_energy(atoms, basis_set, num_alpha_electrons, num_beta_electrons);
+        return calculate_total_energy(temp_atoms, temp_basis_set, num_alpha_electrons, num_beta_electrons);
     };
     
-    double fc = eval_energy(c);
-    double fd = eval_energy(d);
+    // Use Golden section search from homework
+    Golden golden(1e-5);
+    Bracketmethod bracket;
     
-    // Golden section iterations
-    int max_line_search_iter = 50;
-    int line_iter = 0;
-    while (std::abs(b - a) > tol && line_iter < max_line_search_iter)
-    {
-        if (fc < fd)
-        {
-            b = d;
-            d = c;
-            fd = fc;
-            c = b - (b - a) * resphi;
-            fc = eval_energy(c);
-        }
-        else
-        {
-            a = c;
-            c = d;
-            fc = fd;
-            d = a + (b - a) * resphi;
-            fd = eval_energy(d);
-        }
-        line_iter++;
-    }
+    // Bracket the minimum starting from 0 to adaptive_max_step
+    bracket.bracket(0.0, adaptive_max_step, energy_func);
     
-    // Return optimal step size
-    double optimal_step = (a + b) / 2.0;
+    // Find the minimum
+    double optimal_step = golden.minimize(energy_func);
     
     // Set atoms to optimal positions
     for (size_t i = 0; i < atoms.size(); ++i)
@@ -213,6 +105,19 @@ double line_search(std::vector<Atom>& atoms,
         atoms[i].pos = original_positions[i] + optimal_step * search_dir.col(i);
     }
     basis_set = make_sto3g_basis_from_xyz(atoms);
+    
+    // Verify energy decreased
+    double final_energy = calculate_total_energy(atoms, basis_set, num_alpha_electrons, num_beta_electrons);
+    if (final_energy > initial_energy)
+    {
+        // Line search failed - restore original positions
+        for (size_t i = 0; i < atoms.size(); ++i)
+        {
+            atoms[i].pos = original_positions[i];
+        }
+        basis_set = make_sto3g_basis_from_xyz(atoms);
+        return 0.0;
+    }
     
     return optimal_step;
 }
@@ -224,13 +129,17 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
                                    int num_beta_electrons,
                                    double gradient_tol = 1e-4,
                                    int max_iterations = 100,
-                                   const std::string& output_path = "")
+                                   const std::string& output_path = "",
+                                   bool logging = true)
 {
-    std::cout << "\n========================================\n";
-    std::cout << "Starting Steepest Descent Optimization\n";
-    std::cout << "========================================\n";
-    std::cout << "Convergence threshold: " << gradient_tol << " (gradient norm)\n";
-    std::cout << "Maximum iterations: " << max_iterations << "\n\n";
+    if (logging)
+    {
+        std::cout << "\n========================================\n";
+        std::cout << "Starting Steepest Descent Optimization\n";
+        std::cout << "========================================\n";
+        std::cout << "Convergence threshold: " << gradient_tol << " (gradient norm)\n";
+        std::cout << "Maximum iterations: " << max_iterations << "\n\n";
+    }
     
     std::vector<double> energies;
     std::vector<double> gradient_norms;
@@ -242,10 +151,9 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
                                                num_alpha_electrons, 
                                                num_beta_electrons);
         
-        // Calculate gradient
-        arma::mat gradient = calculate_gradient(atoms, basis_set,
-                                               num_alpha_electrons,
-                                               num_beta_electrons);
+        // Calculate gradient using header function (returns vector, reshape to matrix)
+        arma::vec gradient_vec = calculate_gradient(atoms, num_alpha_electrons, num_beta_electrons);
+        arma::mat gradient = arma::reshape(gradient_vec, 3, atoms.size());
         
         double grad_norm = arma::norm(gradient, "fro");
         
@@ -263,12 +171,16 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
         if (grad_norm < gradient_tol)
         {
             std::cout << " | CONVERGED\n";
-            std::cout << "\n========================================\n";
-            std::cout << "Optimization Complete!\n";
-            std::cout << "Final Energy: " << energy << " eV\n";
-            std::cout << "Final Gradient Norm: " << grad_norm << "\n";
-            std::cout << "Total Iterations: " << iter << "\n";
-            std::cout << "========================================\n\n";
+            
+            if (logging)
+            {
+                std::cout << "\n========================================\n";
+                std::cout << "Optimization Complete!\n";
+                std::cout << "Final Energy: " << energy << " eV\n";
+                std::cout << "Final Gradient Norm: " << grad_norm << "\n";
+                std::cout << "Total Iterations: " << iter << "\n";
+                std::cout << "========================================\n\n";
+            }
             
             // Print final geometry
             std::cout << "Optimized Geometry:\n";
@@ -319,11 +231,6 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
         
         std::cout << " | Step: " << std::setw(10) << step_size << "\n";
     }
-    
-    // If we reach here, max iterations reached without convergence
-    std::cout << "\nWARNING: Maximum iterations reached without convergence!\n";
-    std::cout << "Final gradient norm: " << gradient_norms.back() << "\n";
-    std::cout << "Final energy: " << energies.back() << " eV\n";
     
     // Save final geometry even if not fully converged
     if (!output_path.empty())

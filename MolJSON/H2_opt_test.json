@@ -1,8 +1,0 @@
-{
-    "atoms_file_path": "input/atoms/H2.xyz",
-    "num_alpha_electrons": 1,
-    "num_beta_electrons": 1,
-    "gradient_tolerance": 5e-3,
-    "max_iterations": 100,
-    "output_geometry_path": "output/H2_optimized.xyz"
-}

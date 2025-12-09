@@ -9,14 +9,64 @@
 
 5. Outputs are printed to terminal and saved in HDF5 format in the output directory.
 
-Next steps:
-1. Implement Geomertry optimization code (HW1) - Steepest descent.
-2. Start test suite for code accuracy and installation sanity checks.
+## Geometry Optimizer Instructions
+
+### Building the Python Module
+
+1. **Build the optimizer module:**
+   ```bash
+   ./build_python_module.sh
+   ```
+   This compiles the `steepest_descent_py` module and places it in the `build/` directory. or:
+
+   ```bash
+   ./build_python_module.sh --install
+   ```
+   This also copies the module to your Python site-packages for system-wide access.
+
+### Using the Optimizer
+
+#### Python Script Usage
+
+```python
+import steepest_descent_py as sd
+
+# Initialize optimizer from a molecular JSON file
+optimizer = sd.SteepestDescentOptimizer(
+    atoms_file_path="MolJSON/H2.json",
+    num_alpha_electrons=1,
+    num_beta_electrons=1
+)
+
+# Calculate initial energy and gradient
+initial_energy = optimizer.calculate_energy()
+gradient = optimizer.calculate_gradient()
+
+# Run optimization
+optimizer.optimize(
+    gradient_tol=1e-4,        # Convergence threshold for gradient norm
+    max_iterations=100,        # Maximum number of optimization steps
+    output_path="output/optimized.xyz"  # Save trajectory
+)
+
+# Get optimized geometry
+final_geometry = optimizer.get_geometry()
+final_energy = optimizer.calculate_energy()
+```
+
+#### Jupyter Notebook Usage
 
 
 
+#### Key Methods
 
+- `calculate_energy()` - Compute the electronic energy at current geometry
+- `calculate_gradient()` - Compute energy gradient with respect to atomic positions
+- `optimize(gradient_tol, max_iterations, output_path)` - Run steepest descent optimization
+- `get_geometry()` - Retrieve current atomic positions as list of (Z, x, y, z) tuples
+- `set_geometry(geom)` - Set atomic positions from list of (Z, x, y, z) tuples
+- `num_atoms()` - Get number of atoms in the system
+- `save_geometry(path)` - Save current geometry to XYZ file
 
 Sources/Credit:
-
-Chemx79 image as skeleton for our docker image: https://github.com/Berkeley-Chem-179-279/hw-common-utils
+- Chemx79 image as skeleton for our docker image: https://github.com/Berkeley-Chem-179-279/hw-common-utils

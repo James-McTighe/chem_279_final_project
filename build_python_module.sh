@@ -2,49 +2,40 @@
 
 # Build script for steepest descent Python module
 
-echo "Building steepest descent Python module..."
 
-# Check if pybind11 is installed
 python3 -c "import pybind11" 2>/dev/null
 if [ $? -ne 0 ]; then
-    echo "pybind11 is not installed. Installing..."
     pip install pybind11
 fi
 
-# Create build directory if it doesn't exist
+st
 if [ ! -d "build" ]; then
     mkdir build
 fi
 
 cd build
 
+# Get pybind11 CMake directory
+PYBIND11_DIR=$(python3 -c "import pybind11; print(pybind11.get_cmake_dir())" 2>/dev/null)
+
 # Run CMake
-echo "Running CMake..."
-cmake ..
+if [ -n "$PYBIND11_DIR" ]; then
+    cmake -Dpybind11_DIR="$PYBIND11_DIR" .. > /dev/null 2>&1
+else
+    cmake .. > /dev/null 2>&1
+fi
 
 # Build the project
-echo "Building..."
-make steepest_descent_py -j$(nproc)
+make steepest_descent_py -j$(nproc) > /dev/null 2>&1
 
 # Check if build was successful
-if [ -f "steepest_descent_py*.so" ] || [ -f "steepest_descent_py*.dylib" ]; then
-    echo ""
-    echo "✓ Build successful!"
-    echo ""
-    echo "The Python module is located in the build directory."
-    echo "You can now use it in Python by adding the build directory to your PYTHONPATH:"
-    echo ""
-    echo "  import sys"
-    echo "  sys.path.insert(0, 'build')"
-    echo "  import steepest_descent_py"
-    echo ""
-    echo "Or you can run the example Jupyter notebook: steepest_descent_example.ipynb"
-else
-    echo ""
-    echo "✗ Build failed. Please check the error messages above."
-    echo ""
-    echo "Common issues:"
-    echo "  1. pybind11 not installed: pip install pybind11"
-    echo "  2. Missing dependencies: Make sure all C++ dependencies are installed"
-    echo "  3. CMake can't find pybind11: Try 'pip install pybind11[global]'"
+if ls steepest_descent_py*.so 1> /dev/null 2>&1 || ls steepest_descent_py*.dylib 1> /dev/null 2>&1; then
+    echo "Python module build successful!"
+    
+    # Optionally install to site-packages
+    if [ "$1" == "--install" ]; then
+        SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
+        cp steepest_descent_py*.so "$SITE_PACKAGES/" 2>/dev/null || cp steepest_descent_py*.dylib "$SITE_PACKAGES/" 2>/dev/null
+        echo "Module installed to site-packages: $SITE_PACKAGES"
+    fi
 fi

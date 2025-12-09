@@ -9,7 +9,7 @@
 // from hw4 solution
 
 // after reviewing with our GSI, I realized that my code from HW2, while it
-// worked for the assignment test cases, was not optimale for solving this HW
+// worked for the assignment test cases, was not optimal for solving this HW
 // assignment, the two main issues were 1) I was approaching the assignment
 // somewhat backwards where I build a list of shells based on the parameters of
 // the Gaussians instead of building a list of Guassians based on the shells 2)
@@ -29,7 +29,7 @@ struct Shell_Info
     int shell = 0;
 };
 
-std::vector<Gaussian> get_gaussians_in_shell(Shell_Info si)
+inline std::vector<Gaussian> get_gaussians_in_shell(Shell_Info si)
 {
     std::vector<Gaussian> v;
     for ( int i = si.shell; i >= 0; i-- )
@@ -51,7 +51,7 @@ std::vector<Gaussian> get_gaussians_in_shell(Shell_Info si)
     return v;
 };
 
-double summation_nonsense(const Gaussian g1, const Gaussian g2, arma::vec3 Rp,
+inline double summation_nonsense(const Gaussian g1, const Gaussian g2, arma::vec3 Rp,
                           int dim)
 {
     int la = g1.power[dim];
@@ -77,7 +77,7 @@ double summation_nonsense(const Gaussian g1, const Gaussian g2, arma::vec3 Rp,
     return sum;
 }
 
-double analytical_S_ab_dim(const Gaussian g1, const Gaussian g2, int dim)
+inline double analytical_S_ab_dim(const Gaussian g1, const Gaussian g2, int dim)
 {
     double gamma = g1.alpha + g2.alpha;
     double result = 1;
@@ -89,7 +89,7 @@ double analytical_S_ab_dim(const Gaussian g1, const Gaussian g2, int dim)
     return result;
 }
 
-double analytical_gaussian_overlap(const Gaussian g1, const Gaussian g2)
+inline double analytical_gaussian_overlap(const Gaussian g1, const Gaussian g2)
 {
     double result = 1;
     for ( int i = 0; i < 3; i++ )
@@ -99,7 +99,7 @@ double analytical_gaussian_overlap(const Gaussian g1, const Gaussian g2)
     return result;
 }
 
-arma::mat calculate_overlap_matrix(std::vector<Gaussian> vg1,
+inline arma::mat calculate_overlap_matrix(std::vector<Gaussian> vg1,
                                    std::vector<Gaussian> vg2)
 {
     arma::mat m = arma::mat(vg1.size(), vg2.size());

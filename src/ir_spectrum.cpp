@@ -87,7 +87,6 @@ int main(int argc, char ** argv)
     // most of your code will go here
 
     // solve scf and get final state
-    arma::mat S = build_overlap_matrix(basis_set);
     arma::mat H_core = core_hamiltonian(basis_set, atoms);
     SCFState final_SCF_state = solve_SCF_UHF(
         basis_set, atoms, num_alpha_electrons, num_beta_electrons);
@@ -112,7 +111,7 @@ int main(int argc, char ** argv)
 
 
     // gammaAB_RA
-    arma::mat y = build_y_matrix(basis_set, final_SCF_state, atoms);
+    arma::mat y = y_matrix(basis_set, atoms, final_SCF_state);
 
     for ( int A = 0; A < num_atoms; ++A )
     {
