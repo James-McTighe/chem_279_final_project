@@ -71,14 +71,16 @@ arma::mat hessian_matrix(std::vector<Atom> atoms, const int & n_alpha,
     int N = mass_vec.size();
 
     // Create G matrix (mass-weighting matrix)
-    arma::mat G = arma::diagmat(1 / arma::sqrt(mass_vec));
+    arma::mat G = mass_vec * mass_vec.t();
+
+    G = 1 / arma::sqrt(G);
 
     // Calculate force constant matrix F (Hessian)
     arma::mat F =
         double_central_derivative_approx(atoms, n_alpha, n_beta, step_size);
 
     // Apply mass weighting: F_mass_weighted
-    F = G * F * G;
+    F %= G;
 
     return F;
 }
@@ -90,6 +92,9 @@ arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
 {
     arma::vec eigenvalues;
     arma::mat eigenvectors;
+
+    // hessian scaling applied per Shaw et al
+    mass_weighted_hessian /= 1.48;
 
     // Symmetrize
     arma::eig_sym(eigenvalues, eigenvectors, mass_weighted_hessian);
