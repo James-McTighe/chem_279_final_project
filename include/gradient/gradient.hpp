@@ -135,7 +135,7 @@ arma::vec3 gamma_derivative(Atom A, Atom B)
                     arma::vec3 base =
                         boys_func_derivative(A_STO3G.prim[k], A_STO3G.prim[kp],
                                              B_STO3G.prim[l], B_STO3G.prim[lp]);
-                    gamma += dsk * dskp * dsl * dslp * base * 27.211324570273;
+                    gamma += dsk * dskp * dsl * dslp * base * 27.211324570273; // convert to eV
                 }
     return gamma;
 };

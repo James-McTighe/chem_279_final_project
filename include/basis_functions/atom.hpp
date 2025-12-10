@@ -37,7 +37,7 @@ inline double nuclear_repulsion(std::vector<Atom> atoms)
             energy += A.z_star * B.z_star / R;
         }
 
-    return energy * 27.211324570273;
+    return energy * 27.211324570273; // convert to eV
 }
 
 inline arma::vec3
@@ -63,7 +63,7 @@ nuclear_repulsion_derivitive_atom_specific(const Atom & target,
     }
 
     repulsion_gradient.replace(arma::datum::nan, 0.0);
-    repulsion_gradient *= 27.211324570273;
+    // repulsion_gradient *= 27.211324570273;
     return repulsion_gradient;
 }
 

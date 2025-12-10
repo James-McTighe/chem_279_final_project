@@ -1,14 +1,6 @@
 #include "all_headers.hpp"
 #include <iomanip>
 
-/**
- * Steepest Descent Geometry Optimization
- * The algorithm:
- * 1. Calculate energy and gradient at current geometry
- * 2. Move atoms in direction of negative gradient (downhill)
- * 3. Use line search to find optimal step size
- * 4. Repeat until gradient norm falls below convergence threshold
- */
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
@@ -66,7 +58,7 @@ double line_search(std::vector<Atom>& atoms,
     // Get initial energy before taking a step
     double initial_energy = calculate_total_energy(atoms, basis_set, num_alpha_electrons, num_beta_electrons);
     
-    // Try using NEGATIVE gradient (proper steepest descent direction)
+    // Go in negative gradient direction
     arma::mat search_dir = -gradient;
     
     // Scale the max_step based on gradient magnitude to prevent huge steps
@@ -151,7 +143,7 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
                                                num_alpha_electrons, 
                                                num_beta_electrons);
         
-        // Calculate gradient using header function (returns vector, reshape to matrix)
+        // Calculate gradient
         arma::vec gradient_vec = calculate_gradient(atoms, num_alpha_electrons, num_beta_electrons);
         arma::mat gradient = arma::reshape(gradient_vec, 3, atoms.size());
         
@@ -232,7 +224,7 @@ void steepest_descent_optimization(std::vector<Atom>& atoms,
         std::cout << " | Step: " << std::setw(10) << step_size << "\n";
     }
     
-    // Save final geometry even if not fully converged
+    // Save final geometry if max iteration reached without convergence
     if (!output_path.empty())
     {
         // Create output directory if it doesn't exist

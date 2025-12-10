@@ -8,7 +8,6 @@ if [ $? -ne 0 ]; then
     pip install pybind11
 fi
 
-st
 if [ ! -d "build" ]; then
     mkdir build
 fi
