@@ -92,7 +92,6 @@ arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
     arma::mat eigenvectors;
 
     // Symmetrize
-    // arma::mat M = arma::diagmat(mass_weighted_hessian);
     arma::eig_sym(eigenvalues, eigenvectors, mass_weighted_hessian);
 
     std::cout << "Eigen Values: " << eigenvalues << std::endl;
@@ -105,10 +104,6 @@ arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
         {
             frequencies[i] =
                 (1.0 / (2.0 * M_PI)) * std::sqrt(eigenvalues[i]) * 219474.63;
-        } else if ( eigenvalues[i] < -1e-10 )
-        {
-            frequencies[i] =
-                -(1.0 / (2.0 * M_PI)) * std::sqrt(-eigenvalues[i]) * 219474.63;
         } else
         {
             frequencies[i] = 0.0;
