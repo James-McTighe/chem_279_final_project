@@ -1,15 +1,13 @@
-# chem_279_final_project
+# Chem 279 Final Project - Steepest Descent Optimizer Feature Branch
 
-## Instructions (Rough Draft WIP)
+## Optimizer Instructions
 
-1. build image with bash build_image.sh
-2. run interactive session with bash interactive.sh
+1. Open Dev Container in VS code or build image with bash build_image.sh
+2. run interactive session with bash interactive.sh if not utilizing Dev Container.
 3. Compile program with bash build.sh inside container
-4. Run executable with ./build/ir_spec MolJSON/H2.json (or alternative input mol.xyz file) 
+4. Run executable with ./build/steepest_descent MolJSON/H2.json (Or other molecule).
+5. Outputs are printed to terminal and saved in xyz format in the output directory.
 
-5. Outputs are printed to terminal and saved in HDF5 format in the output directory.
-
-## Geometry Optimizer Instructions
 
 ### Building the Python Module
 
@@ -37,25 +35,6 @@ optimizer = sd.SteepestDescentOptimizer(
     num_alpha_electrons=1,
     num_beta_electrons=1
 )
-
-# Calculate initial energy and gradient
-initial_energy = optimizer.calculate_energy()
-gradient = optimizer.calculate_gradient()
-
-# Run optimization
-optimizer.optimize(
-    gradient_tol=1e-4,        # Convergence threshold for gradient norm
-    max_iterations=100,        # Maximum number of optimization steps
-    output_path="output/optimized.xyz"  # Save trajectory
-)
-
-# Get optimized geometry
-final_geometry = optimizer.get_geometry()
-final_energy = optimizer.calculate_energy()
-```
-
-#### Jupyter Notebook Usage
-
 
 
 #### Key Methods
