@@ -1,6 +1,6 @@
 {
-    "atoms_file_path": "Geometries/HO_SD.xyz",
+    "atoms_file_path": "input/atoms/HO_SD.xyz",
     "output_file_path": "output/HO_SD.hdf5",
     "num_alpha_electrons": 4,
-    "num_beta_electrons": 3
+    "num_beta_electrons": 4
 }
