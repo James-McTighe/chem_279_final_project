@@ -8,19 +8,6 @@
 
 // from hw4 solution
 
-// after reviewing with our GSI, I realized that my code from HW2, while it
-// worked for the assignment test cases, was not optimale for solving this HW
-// assignment, the two main issues were 1) I was approaching the assignment
-// somewhat backwards where I build a list of shells based on the parameters of
-// the Gaussians instead of building a list of Guassians based on the shells 2)
-// my momentum values were passed as a single value instead of a vector and the
-// the momentum value was dynamically updated instead of being specific to the
-// shell
-
-// Therefore, I am updating the HW2 solution provided by the GSI here, a major
-// change that I made was that I changed all the references to Eigen to
-// Armadillo.  Eigen does provide nice interface for a 3-d vector, but after the
-// last assignment I'm more comfortable working in armadillo
 
 struct Shell_Info
 {

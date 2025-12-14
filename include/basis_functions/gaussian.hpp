@@ -5,11 +5,8 @@
 #include <functional>
 #include <stdexcept>
 
-// from hw4 solution
 
 // taken from hw2 solution
-// my original Gaussian that I used didn't capture momentum in triplicates and
-// was therefore limited simple class to hold the data that defines a gaussian
 class Gaussian
 {
 public:
