@@ -4,6 +4,6 @@
     "output_geometry_path" : "output/HF_optimized.xyz",
     "num_alpha_electrons" : 4, 
     "num_beta_electrons" : 4,
-    "gradient_tolerance" : 5.0,
-    "max_iterations" : 50
+    "gradient_tolerance" : 0.00001,
+    "max_iterations" : 100
 }

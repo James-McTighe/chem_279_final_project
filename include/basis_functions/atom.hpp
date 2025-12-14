@@ -37,33 +37,32 @@ inline double nuclear_repulsion(std::vector<Atom> atoms)
             energy += A.z_star * B.z_star / R;
         }
 
-    return energy * 27.211324570273; // convert to eV
+    return energy;
 }
 
-inline arma::vec3
-nuclear_repulsion_derivitive_atom_specific(const Atom & target,
-                                           const std::vector<Atom> & atoms)
+
+inline arma::vec3 nuclear_repulsion_derivitive_atom_specific(const Atom & target,
+                                                            const std::vector<Atom> & atoms)
 {
     arma::vec3 repulsion_gradient(arma::fill::zeros);
 
-    for ( const Atom atom : atoms )
+    for ( const Atom& atom : atoms )
     {
         if ( atom.vector_idx == target.vector_idx )
             continue;
 
-        arma::vec3 result;
+        arma::vec3 Rij = target.pos - atom.pos;
+        double r_mag = arma::norm(Rij);
+        double r3 = std::pow(r_mag, 3);
 
-        arma::vec3 R = target.pos - atom.pos;
-        double R3 = arma::norm(R);
-        R3 = std::pow(R3, 3);
+        // Standard physics: Force on A due to B = (Za*Zb / r^3) * (Ra - Rb)
+        // Energy Gradient is the NEGATIVE of the force: dE/dRa = -Force
+        arma::vec3 term = - (target.z_star * atom.z_star * Rij) / r3;
 
-        result = -1 * target.z_star * atom.z_star * R / R3;
-
-        repulsion_gradient += result;
+        repulsion_gradient += term;
     }
 
-    repulsion_gradient.replace(arma::datum::nan, 0.0);
-    // repulsion_gradient *= 27.211324570273;
+    
     return repulsion_gradient;
 }
 

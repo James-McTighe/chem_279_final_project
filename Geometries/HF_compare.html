@@ -1,0 +1,53 @@
+<div id="3dmolviewer_17657083723805907"  style="position: relative; width: 1800px; height: 500px;">
+        <p id="3dmolwarning_17657083723805907" style="background-color:#ffcccc;color:black">3Dmol.js failed to load for some reason.  Please check your browser console for error messages.<br></p>
+        </div>
+<script>
+
+var loadScriptAsync = function(uri){
+  return new Promise((resolve, reject) => {
+    //this is to ignore the existence of requirejs amd
+    var savedexports, savedmodule;
+    if (typeof exports !== 'undefined') savedexports = exports;
+    else exports = {}
+    if (typeof module !== 'undefined') savedmodule = module;
+    else module = {}
+
+    var tag = document.createElement('script');
+    tag.src = uri;
+    tag.async = true;
+    tag.onload = () => {
+        exports = savedexports;
+        module = savedmodule;
+        resolve();
+    };
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+});
+};
+
+if(typeof $3Dmolpromise === 'undefined') {
+$3Dmolpromise = null;
+  $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@2.5.3/build/3Dmol-min.js');
+}
+
+var viewer_17657083723805907 = null;
+var warn = document.getElementById("3dmolwarning_17657083723805907");
+if(warn) {
+    warn.parentNode.removeChild(warn);
+}
+$3Dmolpromise.then(function() {
+viewer_17657083723805907 = $3Dmol.createViewer(document.getElementById("3dmolviewer_17657083723805907"),{backgroundColor:"white"});
+viewer_17657083723805907.zoomTo();
+	viewer_17657083723805907.addModel("2\nHF unoptimized geometry from HW5\nH   0.00000000   0.00000000   0.00000000\nF   1.72000000   0.00000000   0.00000000","xyz");
+	viewer_17657083723805907.setStyle({"model": -1},{"stick": {"color": "white"}, "sphere": {"scale": 0.3, "color": "#4682b4"}});
+	viewer_17657083723805907.addLabel("Unoptimized",{"position": {"x": 0, "y": 3.5, "z": 0}, "backgroundColor": "white", "fontColor": "#4682b4", "fontSize": 18, "borderThickness": 0});
+	viewer_17657083723805907.addModel("2\nInitial Energy: -171.5505372419 | Final Energy: -179.4359377825\nH   10.40939860   0.00000000   0.00000000\nF   11.31060140   0.00000000   0.00000000","xyz");
+	viewer_17657083723805907.setStyle({"model": -1},{"stick": {"color": "white"}, "sphere": {"scale": 0.3, "color": "#228b22"}});
+	viewer_17657083723805907.addLabel("SD",{"position": {"x": 10, "y": 3.5, "z": 0}, "backgroundColor": "white", "fontColor": "#228b22", "fontSize": 18, "borderThickness": 0});
+	viewer_17657083723805907.addModel("2\nMaterials Project (Optimized)\nH   21.01567482   0.07504700   -0.06284500\nF   21.94341018   0.07504700   -0.06284500","xyz");
+	viewer_17657083723805907.setStyle({"model": -1},{"stick": {"color": "white"}, "sphere": {"scale": 0.3, "color": "#d9534f"}});
+	viewer_17657083723805907.addLabel("MP",{"position": {"x": 20, "y": 3.5, "z": 0}, "backgroundColor": "white", "fontColor": "#d9534f", "fontSize": 18, "borderThickness": 0});
+	viewer_17657083723805907.zoomTo();
+viewer_17657083723805907.render();
+});
+</script>

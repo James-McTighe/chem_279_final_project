@@ -4,6 +4,6 @@
     "output_geometry_path" : "output/H2O_optimized.xyz",
     "num_alpha_electrons" : 4, 
     "num_beta_electrons" : 4,
-    "gradient_tolerance" : 0.001,
+    "gradient_tolerance" : 0.00001,
     "max_iterations" : 100
 }
