@@ -1,0 +1,7 @@
+{
+    "atoms_file_path": "input/atoms/CH3.xyz",
+    "output_file_path": "output/CH3.hdf5",
+    "output_geometry_path": "output/CH3_optimized.xyz",
+    "num_alpha_electrons": 5,
+    "num_beta_electrons": 4
+}
