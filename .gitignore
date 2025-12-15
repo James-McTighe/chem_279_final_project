@@ -42,3 +42,4 @@
 
 build/
 scratch/
+tests/__pycache__
