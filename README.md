@@ -46,6 +46,8 @@ optimizer = sd.SteepestDescentOptimizer(
 - `set_geometry(geom)` - Set atomic positions from list of (Z, x, y, z) tuples
 - `num_atoms()` - Get number of atoms in the system
 - `save_geometry(path)` - Save current geometry to XYZ file
-
+```
 Sources/Credit:
-- Chemx79 image as skeleton for our docker image: https://github.com/Berkeley-Chem-179-279/hw-common-utils
+- Chemx79 image as skeleton for our docker image:
+[Docker Base Image link](https://github.com/Berkeley-Chem-179-279/hw-common-utils)
+- Optimize Molecule geometries from [Materials Project](https://next-gen.materialsproject.org/)
