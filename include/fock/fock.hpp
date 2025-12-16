@@ -168,7 +168,7 @@ struct SCFState
 };
 
 // helper function to generate new P matricies at each iteration of the SCF
-// solver.  
+// solver.
 arma::mat build_spin_density(arma::mat mo_coefficients, int number_electrons)
 {
     arma::mat density(arma::size(mo_coefficients), arma::fill::zeros);
@@ -279,9 +279,6 @@ SCFState solve_SCF_UHF(const std::vector<ContractedGaussian> & basis_set,
     return current_state;
 }
 
-// from equation 2.5 in instructions, this is used to calculate the first and
-// second terms of the equation.  The energy output of this function corresponds
-// to spin in one direction
 double calc_electronic_energy(arma::mat h_core, arma::mat fock_matrix,
                               arma::mat spin_density)
 {
