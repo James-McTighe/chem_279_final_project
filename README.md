@@ -35,8 +35,6 @@ optimizer = sd.SteepestDescentOptimizer(
     num_beta_electrons=1
 )
 
-- Moleculer Geometry Optimization via Steepest Descent implementation can be found in its dedicated feature branch 'Optimizer(WIP)' due to current IR output inaccuracies from the SD optimized molecules.
-
 #### Key Methods
 
 - calculate_energy() - Compute the electronic energy at
