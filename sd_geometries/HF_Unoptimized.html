@@ -1,0 +1,46 @@
+<div id="3dmolviewer_17657088552460828"  style="position: relative; width: 900px; height: 700px;">
+        <p id="3dmolwarning_17657088552460828" style="background-color:#ffcccc;color:black">3Dmol.js failed to load for some reason.  Please check your browser console for error messages.<br></p>
+        </div>
+<script>
+
+var loadScriptAsync = function(uri){
+  return new Promise((resolve, reject) => {
+    //this is to ignore the existence of requirejs amd
+    var savedexports, savedmodule;
+    if (typeof exports !== 'undefined') savedexports = exports;
+    else exports = {}
+    if (typeof module !== 'undefined') savedmodule = module;
+    else module = {}
+
+    var tag = document.createElement('script');
+    tag.src = uri;
+    tag.async = true;
+    tag.onload = () => {
+        exports = savedexports;
+        module = savedmodule;
+        resolve();
+    };
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+});
+};
+
+if(typeof $3Dmolpromise === 'undefined') {
+$3Dmolpromise = null;
+  $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@2.5.3/build/3Dmol-min.js');
+}
+
+var viewer_17657088552460828 = null;
+var warn = document.getElementById("3dmolwarning_17657088552460828");
+if(warn) {
+    warn.parentNode.removeChild(warn);
+}
+$3Dmolpromise.then(function() {
+viewer_17657088552460828 = $3Dmol.createViewer(document.getElementById("3dmolviewer_17657088552460828"),{backgroundColor:"white"});
+viewer_17657088552460828.zoomTo();
+	viewer_17657088552460828.addModel("2\n\nH 0.00000000 0.00000000 0.00000000\nF 1.72000000 0.00000000 0.00000000","xyz");
+	viewer_17657088552460828.setStyle({"stick": {"color": "white", "radius": 0.12}, "sphere": {"scale": 0.3, "color": "#4682b4"}});
+	viewer_17657088552460828.zoomTo();
+viewer_17657088552460828.render();
+});
+</script>
