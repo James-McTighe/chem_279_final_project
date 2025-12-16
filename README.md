@@ -14,4 +14,4 @@ Sources/Credit:
 
 Chemx79 image as skeleton for our docker image:
 [Docker Base Image link](https://github.com/Berkeley-Chem-179-279/hw-common-utils)
-
+Optimized Molecule geometries from [Materials Project](https://next-gen.materialsproject.org)
