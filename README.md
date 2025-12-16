@@ -1,4 +1,4 @@
-# Chem 279 Final Project - Steepest Descent Optimizer Feature Branch
+# Chem 279 Final Project - Steepest Descent Molecular Geometry Optimization and IR Spectroscopy Computation
 
 ## IR Spec Instructions
 
