@@ -9,22 +9,11 @@
 5. Outputs are printed to terminal and saved in xyz format in the output directory.
 
 
-### Building the Python Module
-
-1. **Build the optimizer module:**
-   ```bash
-   ./build_python_module.sh
-   ```
-   This compiles the `steepest_descent_py` module and places it in the `build/` directory. or:
-
-   ```bash
-   ./build_python_module.sh --install
-   ```
-   This also copies the module to your Python site-packages for system-wide access.
 
 ### Using the Optimizer
 
 #### Python Script Usage
+* Ensure python module in the same directory as script, or add to python environment if using with Jupyter notebook.
 
 ```python
 import steepest_descent_py as sd
@@ -46,6 +35,7 @@ optimizer = sd.SteepestDescentOptimizer(
 - `set_geometry(geom)` - Set atomic positions from list of (Z, x, y, z) tuples
 - `num_atoms()` - Get number of atoms in the system
 - `save_geometry(path)` - Save current geometry to XYZ file
+
 ```
 Sources/Credit:
 - Chemx79 image as skeleton for our docker image:
