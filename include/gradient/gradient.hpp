@@ -117,8 +117,8 @@ arma::vec3 gamma_derivative(Atom A, Atom B)
 
     double dsk, dskp, dsl, dslp;
 
-    // I create new contracted Gaussians here because I can't conveniently
-    // access them from the basis set vector
+    // create new contracted Gaussians here because they can't be conveniently
+    // accessed from the basis set vector
     auto A_STO3G = create_s_contraction(A);
     auto B_STO3G = create_s_contraction(B);
 

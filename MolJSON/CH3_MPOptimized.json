@@ -1,0 +1,6 @@
+{
+    "atoms_file_path": "input/atoms/CH3_MPOptimized.xyz",
+    "output_file_path": "output/CH3_MPOptimized.hdf5",
+    "num_alpha_electrons": 5,
+    "num_beta_electrons": 4
+}

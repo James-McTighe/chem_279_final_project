@@ -78,8 +78,7 @@ struct ContractedGaussian
             if ( exp <= 0.0 )
                 throw std::runtime_error(
                     "Primitive exponent must be > 0."); // edge case just in
-                                                        // case I overwrite a
-                                                        // value by accident
+                                                        // case a value is overwritten
 
             // actual parameter assignemnt
             power[k] = exp;
@@ -92,10 +91,6 @@ struct ContractedGaussian
             atom =
                 std::to_string(config["atomic_number"]
                                    .get<int>()); // or map to symbol if you like
-        }
-        if ( config.contains("shell_momentum") )
-        {
-            // you can store/validate this if helpful
         }
     }
 

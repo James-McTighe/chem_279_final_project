@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <armadillo>
 
-// from hw4 solution
-// used file parsing from hw3 because I liked it better
 
 struct Atom
 {
@@ -193,8 +191,6 @@ std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
         }
         idx++;
 
-        // This is cheating but I would use map.contains if I was allowed to use
-        // c++ 20
 
         std::vector<int> allowed_elements = {1, 6, 7, 8, 9};
 

@@ -98,9 +98,6 @@ arma::vec vibrational_frequencies(arma::mat mass_weighted_hessian,
 
     // Symmetrize
     arma::eig_sym(eigenvalues, eigenvectors, mass_weighted_hessian);
-
-    std::cout << "Eigen Values: " << eigenvalues << std::endl;
-
     // Convert eigenvalues to frequencies in hartree -> cm^-1
     arma::vec frequencies(eigenvalues.n_elem);
     for ( size_t i = 0; i < eigenvalues.n_elem; ++i )
