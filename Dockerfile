@@ -1,4 +1,3 @@
-# Use an official Ubuntu base image
 FROM ubuntu:25.10
 
 # Set noninteractive mode for apt
@@ -63,7 +62,8 @@ RUN pip install --upgrade pip && \
     pip install \
         pytest \
         numpy \
-        h5py 
+        h5py \
+        pybind11[global] 
 
 WORKDIR /work
 

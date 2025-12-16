@@ -20,6 +20,6 @@
 #include "hamiltonian.hpp"
 #include "math.hpp"
 #include "overlap.hpp"
-#include "vibration.hpp"
+#include "vibration/vibration.hpp"
 
 #include "geometry_optimization/golden.hpp"

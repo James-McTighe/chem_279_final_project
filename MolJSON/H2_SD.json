@@ -1,6 +1,0 @@
-{
-    "atoms_file_path": "input/atoms/H2_SD.xyz",
-    "output_file_path": "output/H2_SD.hdf5",
-    "num_alpha_electrons": 1,
-    "num_beta_electrons": 1
-}

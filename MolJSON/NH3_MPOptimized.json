@@ -1,7 +1,7 @@
 {
     "atoms_file_path": "input/atoms/NH3_MPOptimized.xyz",
     "output_file_path": "output/NH3_MPOptimized.hdf5",
+    "output_geometry_path": "sd_geometries/NH3_MPOptimized.xyz",
     "num_alpha_electrons": 4,
     "num_beta_electrons": 4
 }
-
