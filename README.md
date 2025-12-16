@@ -11,7 +11,7 @@
 5. Outputs are are saved under the `output` directory in `.out` file form.
 
 Sources/Credit:
-
-Chemx79 image as skeleton for our docker image:
+- Chemx79 image as skeleton for our docker image:
 [Docker Base Image link](https://github.com/Berkeley-Chem-179-279/hw-common-utils)
+- Optimize Molecule geometries from [Materials Project](https://next-gen.materialsproject.org/)
 
