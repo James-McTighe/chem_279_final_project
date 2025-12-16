@@ -10,6 +10,8 @@
 
 5. Outputs are are saved under the `output` directory in `.out` file form.
 
+- Moleculer Geometry Optimization via Steepest Descent implementation can be found in its dedicated feature branch 'Optimizer(WIP)' due to current IR output inaccuracies from the SD optimized molecules.
+
 Sources/Credit:
 - Chemx79 image as skeleton for our docker image:
 [Docker Base Image link](https://github.com/Berkeley-Chem-179-279/hw-common-utils)
