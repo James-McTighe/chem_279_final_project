@@ -1,9 +1,0 @@
-{
-    "atoms_file_path" : "input/atoms/HO.xyz",
-    "output_file_path" : "output/HO.hdf5",
-    "output_geometry_path" : "output/HO_optimized.xyz",
-    "num_alpha_electrons" : 4, 
-    "num_beta_electrons" : 3,
-    "gradient_tolerance" : 0.00001,
-    "max_iterations" : 100
-}

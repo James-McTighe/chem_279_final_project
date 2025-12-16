@@ -1,9 +1,0 @@
-{
-    "atoms_file_path" : "input/atoms/CH3_MPOptimized.xyz",
-    "output_file_path" : "output/CH3_MPOptimized.hdf5",
-    "output_geometry_path" : "output/CH3_MPOptimized.xyz",
-    "num_alpha_electrons" : 5,
-    "num_beta_electrons" : 4,
-    "gradient_tolerance" : 0.00001,
-    "max_iterations" : 100
-}

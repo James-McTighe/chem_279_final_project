@@ -1,7 +1,6 @@
 {
-    "atoms_file_path" : "input/atoms/H2_MPOptimized.xyz",
-    "output_file_path" : "output/H2_MPOptimized.hdf5",
-    "output_geometry_path" : "output/H2_MPOptimized.xyz",
-    "num_alpha_electrons" : 1, 
-    "num_beta_electrons" : 1
+    "atoms_file_path": "input/atoms/H2_MPOptimized.xyz",
+    "output_file_path": "output/H2_MPOptimized.hdf5",
+    "num_alpha_electrons": 1,
+    "num_beta_electrons": 1
 }

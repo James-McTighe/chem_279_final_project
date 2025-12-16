@@ -131,6 +131,7 @@ inline std::vector<Atom> parse_file(std::string filepath, bool verbose = false)
             // It's an element symbol, convert to atomic number
             if ( first_token == "H" ) a.z_num = 1;
             else if ( first_token == "C" ) a.z_num = 6;
+            else if ( first_token == "N" ) a.z_num = 7;
             else if ( first_token == "O" ) a.z_num = 8;
             else if ( first_token == "F" ) a.z_num = 9;
             else

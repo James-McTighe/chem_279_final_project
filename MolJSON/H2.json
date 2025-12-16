@@ -1,9 +1,6 @@
 {
     "atoms_file_path" : "input/atoms/H2.xyz",
     "output_file_path" : "output/H2.hdf5",
-    "output_geometry_path" : "output/H2_optimized.xyz",
     "num_alpha_electrons" : 1, 
-    "num_beta_electrons" : 1,
-    "gradient_tolerance" : 0.00001,
-    "max_iterations" : 100
+    "num_beta_electrons" : 1
 }
